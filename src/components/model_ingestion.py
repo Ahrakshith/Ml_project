@@ -14,6 +14,8 @@ import numpy as np
 from src.components.model_transformation import Data_Transformation
 from src.components.model_transformation import data_tranformation_config
 
+from src.components.model_trainer import ModelTrainer
+
 
 from src.exception import CustomException
 from src.logger import logging
@@ -66,7 +68,8 @@ if __name__=="__main__":
     dataTransformation=Data_Transformation()
     train_arr,test_arr,_=dataTransformation.initiate_data_transformation(train_data,test_data)
 
-
+    modeltrainer = ModelTrainer()
+    print(modeltrainer.initiate_model_trainer(train_arr, test_arr))
 
 
 
