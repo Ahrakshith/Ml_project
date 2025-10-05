@@ -7,10 +7,25 @@ It demonstrates a **production-grade MLOps pipeline**: data exploration → mode
 ---
 
 ## 🚀 Workflow Summary
-1. **Data Exploration & Model Building**
-   - Performed EDA in Jupyter Notebook, visualized correlations, handled missing values.
-   - Trained multiple models (Linear Regression, Random Forest Regressor) using Scikit-learn.
-   - Saved the best model using `pickle`.
+1️⃣ Data Exploration & Model Building
+
+Performed Exploratory Data Analysis (EDA) using Jupyter Notebook.
+
+Cleaned, visualized, and analyzed relationships between student features and performance.
+
+Encoded categorical variables, scaled numerical ones, and handled missing values.
+
+Trained multiple ML algorithms (Linear Regression, Random Forest, etc.).
+
+Selected the best-performing model based on R² score and cross-validation.
+
+Serialized the final model using pickle for production use.
+
+📁 Main notebooks:
+
+notebook/EDA.ipynb
+
+notebook/model_training.ipynb
 
 2. **Pipeline Modularization**
    - Converted notebooks into reproducible modules under `src/`.
