@@ -43,18 +43,6 @@ The entire ML system is structured into a seven-stage, production-ready pipeline
 The entire Jupyter workflow was refactored into a **modular, reusable Python package** to ensure reproducibility and maintainability.
 
 
-src/
-├── components/
-│   ├── data\_ingestion.py        \# Reads and preprocesses data source
-│   ├── data\_transformation.py   \# Handles categorical encoding, scaling, and feature engineering
-│   └── model\_trainer.py         \# Trains, evaluates, and saves the final model
-├── pipeline/
-│   ├── predict\_pipeline.py      \# Loads the production model and generates predictions
-│   └── training\_pipeline.py     \# Orchestrates the full end-to-end training flow
-└── utils.py                     \# Helper functions (e.g., saving objects, loading models)
-
-
-
 * ✅ Implemented robust **exception handling and logging** across all modules.
 
 ### 3️⃣ Flask Web Application (API Layer)
