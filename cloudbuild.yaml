@@ -1,30 +1,43 @@
 # cloudbuild.yaml
+
 steps:
+  # Step 0: Configure Docker to authenticate with Artifact Registry
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args: ['-c', 'gcloud auth configure-docker us-central1-docker.pkg.dev -q']
+
+  # Step 1: Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', '${_IMAGE}', '.']
 
+  # Step 2: Push image to Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', '${_IMAGE}']
 
+  # Step 3: Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args: [
-      'run','deploy','${_SERVICE}',
-      '--image','${_IMAGE}',
-      '--region','${_REGION}',
+      'run', 'deploy', '${_SERVICE}',
+      '--image', '${_IMAGE}',
+      '--region', '${_REGION}',
+      '--service-account', '${_RUNTIME_SA}',
       '--allow-unauthenticated'
     ]
 
-# 👇 Add this block so Cloud Build is happy when a custom service_account is used
+# Build options
 options:
   logging: CLOUD_LOGGING_ONLY
 
+# Substitution variables
 substitutions:
+  _PROJECT_ID: my-ml-project-474215
   _REGION: us-central1
   _SERVICE: my-ml-api
-  _PROJECT_ID: my-ml-project-474215
   _REPO: ml-repo
   _IMAGE: 'us-central1-docker.pkg.dev/my-ml-project-474215/ml-repo/my-ml-api:${SHORT_SHA}'
+  _RUNTIME_SA: '1071805107569-compute@developer.gserviceaccount.com'
 
+# Image output
 images:
   - 'us-central1-docker.pkg.dev/my-ml-project-474215/ml-repo/my-ml-api:${SHORT_SHA}'
