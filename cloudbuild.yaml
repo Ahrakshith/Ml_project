@@ -1,0 +1,30 @@
+# cloudbuild.yaml
+steps:
+  # Step 1: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_IMAGE}', '.']
+
+  # Step 2: Push image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_IMAGE}']
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', '${_SERVICE}',
+        '--image', '${_IMAGE}',
+        '--region', '${_REGION}',
+        '--allow-unauthenticated'
+      ]
+
+substitutions:
+  _REGION: us-central1
+  _SERVICE: my-ml-api
+  _PROJECT_ID: my-ml-project-474215
+  _REPO: ml-repo
+  _IMAGE: 'us-central1-docker.pkg.dev/my-ml-project-474215/ml-repo/my-ml-api:${SHORT_SHA}'
+
+images:
+  - 'us-central1-docker.pkg.dev/my-ml-project-474215/ml-repo/my-ml-api:${SHORT_SHA}'
