@@ -7,6 +7,7 @@ This project predicts a student’s math score based on demographic and educatio
 The goal was to design a production-ready ML system — from raw data preprocessing to live deployment — demonstrating full MLOps capability.
 
 🧩 Workflow
+
 1️⃣ Data Exploration & Model Building
 
 Performed Exploratory Data Analysis (EDA) using Jupyter Notebook.
@@ -24,6 +25,7 @@ Serialized the final model using pickle for production deployment.
 Main Notebooks:
 notebook/EDA.ipynb
 notebook/model_training.ipynb
+
 
 2️⃣ Modular Pipeline Development
 
@@ -45,6 +47,7 @@ src/
 ✅ Implemented exception handling and logging across all modules.
 ✅ Ensured full reproducibility following ML pipeline best practices.
 
+
 3️⃣ Flask Web Application
 
 Developed an interactive Flask web app for real-time predictions.
@@ -63,6 +66,7 @@ Structured error handling
 
 Logging support for production
 
+
 4️⃣ Containerization with Docker
 
 Built a production-ready Docker image to ensure environment reproducibility.
@@ -78,6 +82,7 @@ Commands Used:
 docker build -t my-ml-api:dev .
 docker run -p 8080:8080 my-ml-api:dev
 
+
 5️⃣ Deployment on Google Cloud Run
 
 Deployed the containerized app on Google Cloud Run (fully serverless).
@@ -91,6 +96,7 @@ Built and pushed Docker image to GCP
 Deployed service to Cloud Run (my-ml-api)
 
 ✅ Result → Fully managed, scalable REST API endpoint.
+
 
 6️⃣ CI/CD Automation with Cloud Build
 
@@ -107,6 +113,7 @@ Deploys to Cloud Run automatically
 
 Every Git push → triggers full rebuild & redeploy 🚀
 
+
 🧠 Tech Stack & Tools
 Layer	Technologies Used
 Data Processing	Python, Pandas, NumPy
@@ -117,6 +124,8 @@ Cloud Deployment	Google Cloud Run, Artifact Registry
 Automation (CI/CD)	Google Cloud Build
 Version Control	Git, GitHub
 Monitoring & Logging	Cloud Logging, Docker logs
+
+
 🏁 End-to-End Flow Summary
 
 1️⃣ Data Exploration & Preprocessing
@@ -126,6 +135,7 @@ Monitoring & Logging	Cloud Logging, Docker logs
 5️⃣ Dockerization
 6️⃣ GCP Deployment (Artifact Registry + Cloud Run)
 7️⃣ CI/CD Automation via Cloud Build
+
 
 🔮 Future Improvements
 
