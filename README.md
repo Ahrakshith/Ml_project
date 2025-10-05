@@ -1,153 +1,111 @@
-🎓 Student Performance Prediction — End-to-End ML Deployment on Google Cloud
 
-🚀 Overview
+# 🚀 Student Performance Predictor: End-to-End MLOps on Google Cloud ☁️
 
-This project predicts a student’s math score based on demographic and educational attributes such as gender, parental education, and test preparation.
+**Predicting student math scores with a production-ready, fully serverless ML system.**
 
-The goal was to design a production-ready ML system — from raw data preprocessing to live deployment — demonstrating full MLOps capability.
+## ✨ Project Overview
 
-🧩 Workflow
+This project delivers a complete MLOps pipeline, starting from raw data analysis to a live, scalable API endpoint on Google Cloud. The goal is to **predict a student's math score** based on key attributes like gender, parental education, and test preparation.
 
-1️⃣ Data Exploration & Model Building
+It serves as a full-stack demonstration of MLOps best practices, CI/CD automation, and cloud-native deployment.
 
-Performed Exploratory Data Analysis (EDA) using Jupyter Notebook.
+---
 
-Cleaned, visualized, and analyzed relationships between student features and performance.
+## 🛠️ Tech Stack & Tools
 
-Encoded categorical variables, scaled numerical features, and handled missing values.
+| Layer | Technologies Used |
+| :--- | :--- |
+| **Data Processing** | Python, Pandas, NumPy |
+| **Modeling** | scikit-learn (Linear Regression, Random Forest) |
+| **Web Framework** | Flask (REST API) |
+| **Containerization** | Docker |
+| **Cloud Deployment** | Google Cloud Run, Artifact Registry |
+| **Automation (CI/CD)** | Google Cloud Build |
+| **Version Control** | Git, GitHub |
+| **Monitoring & Logging**| Cloud Logging, Docker logs |
 
-Trained multiple ML algorithms (Linear Regression, Random Forest, etc.).
+---
 
-Selected the best-performing model using R² score and cross-validation.
+## 🎯 End-to-End Workflow
 
-Serialized the final model using pickle for production deployment.
+The entire ML system is structured into a seven-stage, production-ready pipeline:
 
-Main Notebooks:
-notebook/EDA.ipynb
-notebook/model_training.ipynb
+### 1️⃣ Data Exploration & Model Building (Offline)
 
+* Performed **Exploratory Data Analysis (EDA)** and deep-dive visualization in Jupyter.
+* Conducted feature engineering: cleaned, analyzed relationships, handled missing values, and applied **encoding/scaling**.
+* Trained and evaluated multiple **ML algorithms** (Linear Regression, Random Forest, etc.).
+* Selected the best model based on the **R² score** and cross-validation, then serialized it using `pickle`.
+    * **Main Notebooks:** `notebook/EDA.ipynb`, `notebook/model_training.ipynb`
 
-2️⃣ Modular Pipeline Development
+### 2️⃣ Modular Pipeline Development (Code Refactoring)
 
-Converted Jupyter workflow into modular, reusable Python components under the src/ directory.
+The entire Jupyter workflow was refactored into a **modular, reusable Python package** to ensure reproducibility and maintainability.
 
-Core Modules:
 
 src/
- ├── components/
- │   ├── data_ingestion.py        # Reads and preprocesses data
- │   ├── data_transformation.py   # Handles feature engineering
- │   └── model_trainer.py         # Trains and saves the model
- ├── pipeline/
- │   ├── predict_pipeline.py      # Loads model & predicts new data
- │   └── training_pipeline.py     # Orchestrates the full training
- └── utils.py                     # Utility functions
+├── components/
+│   ├── data\_ingestion.py        \# Reads and preprocesses data source
+│   ├── data\_transformation.py   \# Handles categorical encoding, scaling, and feature engineering
+│   └── model\_trainer.py         \# Trains, evaluates, and saves the final model
+├── pipeline/
+│   ├── predict\_pipeline.py      \# Loads the production model and generates predictions
+│   └── training\_pipeline.py     \# Orchestrates the full end-to-end training flow
+└── utils.py                     \# Helper functions (e.g., saving objects, loading models)
 
 
-✅ Implemented exception handling and logging across all modules.
-✅ Ensured full reproducibility following ML pipeline best practices.
 
+* ✅ Implemented robust **exception handling and logging** across all modules.
 
-3️⃣ Flask Web Application
+### 3️⃣ Flask Web Application (API Layer)
 
-Developed an interactive Flask web app for real-time predictions.
+Developed a lightweight **Flask web application** to serve the model for real-time predictions.
 
-Endpoints:
+* **HTML Form Endpoint:** `/predicted_data` (Renders a form for manual user input).
+* **REST API Endpoint:** `/predict` (Accepts JSON input, perfect for microservice communication).
+* Includes input validation and structured error handling for a production environment.
 
-/predicted_data → Renders HTML form (for manual user input)
+### 4️⃣ Containerization with Docker 🐳
 
-/predict → REST API endpoint for JSON input (used by Docker & Cloud Run)
+The entire application (model, dependencies, and Flask API) was containerized into a single, production-ready Docker image to guarantee environment consistency.
 
-Features:
+* Optimized `Dockerfile` for a smaller image footprint.
+* **Commands Used:**
+    ```bash
+    docker build -t my-ml-api:dev .
+    docker run -p 8080:8080 my-ml-api:dev
+    ```
 
-Input validation
+### 5️⃣ Deployment on Google Cloud Run ☁️
 
-Structured error handling
+Deployed the containerized application to **Google Cloud Run**, a fully serverless platform, providing a managed, scalable REST API endpoint.
 
-Logging support for production
+* Used **Artifact Registry** (`ml-repo`) to store and manage the Docker images.
+* Deployed the service (`my-ml-api`) for autoscaling and zero infrastructure overhead.
 
+### 6️⃣ CI/CD Automation with Cloud Build ⚙️
 
-4️⃣ Containerization with Docker
+Implemented a complete Continuous Integration/Continuous Deployment (CI/CD) pipeline using **Google Cloud Build** and a GitHub trigger.
 
-Built a production-ready Docker image to ensure environment reproducibility.
+* Defined the CI/CD steps in `cloudbuild.yaml`.
+* Every `git push` automatically triggers:
+    1.  Building the new Docker image.
+    2.  Pushing the image to Artifact Registry.
+    3.  Deploying the updated service to Cloud Run.
 
-Included:
+---
 
-All dependencies in requirements.txt
+## 💡 Future Improvements (Roadmap)
 
-Optimized Dockerfile for smaller image size
+* **Vertex AI Integration:** 🔁 Integrate Vertex AI Pipelines for automated, scheduled model retraining and advanced MLOps features.
+* **Observability:** 📊 Add monitoring dashboards using **Prometheus/Grafana** or **Cloud Monitoring** to track model drift and API health.
+* **Testing:** ✅ Implement automated **unit tests** for all modular components within the CI/CD pipeline.
 
-Commands Used:
+---
 
-docker build -t my-ml-api:dev .
-docker run -p 8080:8080 my-ml-api:dev
+## 👨‍💻 Author
 
+| **Rakshith A H** | ahrakshith122@gmail.com |
+| :--- | :--- |
 
-5️⃣ Deployment on Google Cloud Run
-
-Deployed the containerized app on Google Cloud Run (fully serverless).
-
-Steps:
-
-Created an Artifact Registry (ml-repo)
-
-Built and pushed Docker image to GCP
-
-Deployed service to Cloud Run (my-ml-api)
-
-✅ Result → Fully managed, scalable REST API endpoint.
-
-
-6️⃣ CI/CD Automation with Cloud Build
-
-Set up Google Cloud Build for automated CI/CD.
-
-Created: cloudbuild.yaml
-Configured GitHub Trigger:
-
-Builds Docker image
-
-Pushes to Artifact Registry
-
-Deploys to Cloud Run automatically
-
-Every Git push → triggers full rebuild & redeploy 🚀
-
-
-🧠 Tech Stack & Tools
-Layer	Technologies Used
-Data Processing	Python, Pandas, NumPy
-Modeling	scikit-learn
-Web Framework	Flask
-Containerization	Docker
-Cloud Deployment	Google Cloud Run, Artifact Registry
-Automation (CI/CD)	Google Cloud Build
-Version Control	Git, GitHub
-Monitoring & Logging	Cloud Logging, Docker logs
-
-
-🏁 End-to-End Flow Summary
-
-1️⃣ Data Exploration & Preprocessing
-2️⃣ Model Training & Evaluation
-3️⃣ Modular Code Conversion
-4️⃣ Flask REST API Creation
-5️⃣ Dockerization
-6️⃣ GCP Deployment (Artifact Registry + Cloud Run)
-7️⃣ CI/CD Automation via Cloud Build
-
-
-🔮 Future Improvements
-
-🔁 Integrate Vertex AI for automated model retraining
-
-📊 Add monitoring dashboards using Prometheus or Cloud Monitoring
-
-✅ Implement automated unit tests in CI/CD pipeline
-
-💬 Author
-
-👨‍💻 Rakshith A H
-📧 ahrakshith122@gmail.com
-
-⭐ If you found this project helpful, consider giving it a star!
+⭐ If you found this project helpful, please give it a star!
