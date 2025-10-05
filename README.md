@@ -1,130 +1,96 @@
-# 📦 MLProject
+# 🎓 Student Performance Prediction — End-to-End ML Deployment on Google Cloud
 
-End-to-End Machine Learning Project — demonstrating the complete lifecycle of an ML application: **data processing, model training, evaluation, packaging, and deployment**.
-
-
-## 🚀 Overview
-
-This repository implements a **complete machine learning project pipeline**. It includes:
-
-* Data ingestion and preprocessing
-* Feature engineering
-* Model training & evaluation (with `scikit-learn` / `catboost`)
-* Model serialization (saving artifacts)
-* REST API (`Flask` or `FastAPI`) for predictions
-* Packaging with `setup.py` for easy distribution
-* Deployment support (e.g., AWS Elastic Beanstalk / Docker)
-
-The project is structured in a modular way so you can **plug in your own dataset and models**.
+## 📖 Overview
+This project predicts a student's **math score** using demographic and educational attributes such as gender, parental education, and test-preparation status.  
+It demonstrates a **production-grade MLOps pipeline**: data exploration → model training → modular pipeline → REST API → Docker → GCP Cloud Run → CI/CD with Cloud Build.
 
 ---
 
-## ✨ Features
+## 🚀 Workflow Summary
+1. **Data Exploration & Model Building**
+   - Performed EDA in Jupyter Notebook, visualized correlations, handled missing values.
+   - Trained multiple models (Linear Regression, Random Forest Regressor) using Scikit-learn.
+   - Saved the best model using `pickle`.
 
-✅ Clean, modular project structure
-✅ Works with any tabular dataset
-✅ Preprocessing & feature engineering pipeline
-✅ Model training, evaluation, and saving
-✅ REST API for inference
-✅ Deployment-ready (AWS EB / Docker)
-✅ Packaged with `setup.py` for reusability
+2. **Pipeline Modularization**
+   - Converted notebooks into reproducible modules under `src/`.
+   - Implemented `data_ingestion.py`, `data_transformation.py`, `model_trainer.py`, and `predict_pipeline.py`.
+   - Added exception handling & logging for production use.
 
-## 🔧 Setup & Installation
+3. **Flask REST API**
+   - Built `app.py` with two routes:
+     - `/predicted_data` → HTML form for manual input  
+     - `/predict` → JSON API endpoint for programmatic prediction
+   - Example:
+     ```bash
+     curl -X POST https://<CLOUD-RUN-URL>/predict \
+       -H "Content-Type: application/json" \
+       -d '{"instances":[["female","group B","some college","free/reduced","completed",53,66]]}'
+     ```
+     → `{"predictions":[51.03]}`
 
-### 1. Clone the repository
+4. **Docker Containerization**
+   - Created a `Dockerfile` for consistent runtime.
+   - Built and ran locally:
+     ```bash
+     docker build -t my-ml-api:dev .
+     docker run -p 8080:8080 my-ml-api:dev
+     ```
 
-```bash
-git clone https://github.com/krishnaik06/mlproject.git
-cd mlproject
-```
+5. **Deployment on Google Cloud Run**
+   - Created **Artifact Registry** (`ml-repo`) and pushed container image.
+   - Deployed via:
+     ```bash
+     gcloud run deploy my-ml-api \
+       --image us-central1-docker.pkg.dev/my-ml-project-474215/ml-repo/my-ml-api:latest \
+       --region us-central1 --allow-unauthenticated
+     ```
+   - ✅ Live endpoint:  
+     `https://my-ml-api-1071805107569.us-central1.run.app/predict`
 
-### 2. Create a virtual environment
-
-**Linux / macOS**
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-**Windows (cmd)**
-
-```bat
-python -m venv venv
-venv\Scripts\activate
-```
-
-### 3. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. (Optional) Install as a package
-
-```bash
-pip install .
-```
-
----
-
-## 🧰 Usage
-
-### Run the API locally
-
-```bash
-python app.py
-```
-
-By default, it runs on `http://127.0.0.1:5000`.
-
-### Import package in your code
-
-```python
-from src import preprocessing, model, predict
-```
-
-### Generate predictions (example CLI)
-
-```bash
-mlproject-predict data/input.csv
-```
-
----
-
-## 🔄 Workflow
-
-1. **Data ingestion** → Collect raw dataset
-2. **Preprocessing & feature engineering** → Clean & transform data
-3. **Model training & evaluation** → Train ML model(s)
-4. **Save artifacts** → Store trained model in `artifacts/`
-5. **API service** → Serve model via Flask/FastAPI (`app.py`)
-6. **Deployment** → Package with `setup.py`, deploy to AWS EB/Docker
+6. **CI/CD Automation with Cloud Build**
+   - Added `cloudbuild.yaml`:
+     ```yaml
+     options:
+       logging: CLOUD_LOGGING_ONLY
+     steps:
+       - name: 'gcr.io/cloud-builders/docker'
+         args: ['build','-t','${_IMAGE}','.']
+       - name: 'gcr.io/cloud-builders/docker'
+         args: ['push','${_IMAGE}']
+       - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+         entrypoint: gcloud
+         args: [
+           'run','deploy','${_SERVICE}',
+           '--image','${_IMAGE}',
+           '--region','${_REGION}',
+           '--allow-unauthenticated',
+           '--service-account=${_SERVICE_ACCOUNT}'
+         ]
+     substitutions:
+       _REGION: 'us-central1'
+       _SERVICE: 'my-ml-api'
+       _PROJECT_ID: 'my-ml-project-474215'
+       _REPO: 'ml-repo'
+       _IMAGE: 'us-central1-docker.pkg.dev/my-ml-project-474215/ml-repo/my-ml-api:${SHORT_SHA}'
+       _SERVICE_ACCOUNT: 'ml-run-sa@my-ml-project-474215.iam.gserviceaccount.com'
+     images:
+       - '${_IMAGE}'
+     timeout: '1200s'
+     ```
+   - Connected GitHub → Cloud Build Trigger → automatic rebuild + redeploy on each push.
 
 ---
 
-## 📋 Requirements
-
-* Python 3.7+
-* Libraries in `requirements.txt` (e.g., `numpy`, `pandas`, `scikit-learn`, `catboost`, `flask`)
-* (Optional) Docker & AWS CLI for deployment
-
-Install all dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## ☁️ Deployment
-
-* **Local**: Run with `python app.py`
-* **AWS Elastic Beanstalk**: Use `.ebextensions/` config + `requirements.txt`
-* **Docker**: Add a `Dockerfile` and build an image for containerized deployment
+## 🧰 Tech Stack
+| Layer | Technologies |
+|-------|---------------|
+| Data Processing | Python, Pandas, NumPy |
+| Modeling | scikit-learn |
+| API | Flask |
+| Containerization | Docker |
+| Cloud | Google Cloud Run, Artifact Registry |
+| CI/CD | Cloud Build Triggers |
+| Version Control | Git + GitHub |
 
 
-## 🙌 Acknowledgements
-
-* [Krish Naik](https://github.com/krishnaik06) for tutorials and project inspiration
-* Open-source ML & data science community
